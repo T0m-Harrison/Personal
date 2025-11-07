@@ -1,5 +1,7 @@
 from random import randint
 
+deck = [1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,]
+ 
 menu = '''WELCOME TO GAME.PY!!!!!!!!!!!!!
 
 Press 1 to play Guesser
@@ -398,14 +400,21 @@ def NumberRace(target):
             print("WINNNNNNNNNNEEEEEEERRRRRRR")
     proceed = input("Press enter to continue")
 def StickOrTwist():
+    #This means the deck acts like an actual deck of cards, with cards being removed when drawn
+    global deck
+    if len(deck) <= 12:
+        deck = [1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,]
     PHand = []
     BHand = []
     def Draw(Hand, num, who):
         for i in range (num):
-            deck = [1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,1,2,3,4,5,6,7,8,9,10,10,10,10,]
-            drawwhat = randint(1,52)
+            global deck
+            length = len(deck)
+            drawwhat = randint(1, length)
             drawwhat = drawwhat - 1
-            if deck[drawwhat] == 1:
+            drawncard = deck[drawwhat]
+            deck.pop(drawwhat)
+            if drawncard == 1:
                 if who == "Player":
                     print("You drew and ace!!!!!!!")
                     ace = int(input("Would you like it to be 1 or 11? "))
@@ -419,10 +428,8 @@ def StickOrTwist():
                         ace = 11
                     else:
                         ace = 1
-                drawwhat = ace
-            else:
-                drawwhat = deck[drawwhat]
-            Hand.append(drawwhat)
+                drawncard = ace
+            Hand.append(drawncard)
         return Hand
     stop = 0
     PHand = Draw(PHand, 2, "Player")
@@ -456,24 +463,24 @@ def StickOrTwist():
                 stop = 1
                 print("The bot's gone bust! You win!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             else:
+                total = 0
+                for card in deck:
+                    total = total + card
+                average = total / len(deck)
+                average = round(average)
                 if BotMode == 1:
-                    if BTotal < 15:
-                        bot = "twist"
-                        BHand = Draw(BHand, 1, "Bot")
-                    else:
-                        bot = "stick"
+                    stick = 21 - average
                 elif BotMode == 2:
-                    if BTotal < 16:
-                        bot = "twist"
-                        BHand = Draw(BHand, 1, "Bot")
-                    else:
-                        bot = "stick"
+                    stick = 21 - average
+                    stick = stick + 1
                 else:
-                    if BTotal < 18:
-                        bot = "twist"
-                        BHand = Draw(BHand, 1, "Bot")
-                    else:
-                        bot = "stick"
+                    stick = 21 - average
+                    stick = stick + 2
+                if BTotal < stick:
+                    bot = "twist"
+                    BHand = Draw(BHand, 1, "Bot")
+                else:
+                    bot = "stick"
         if player == "stick" and bot == "stick":
             stop = 1
             print("You and the bot have decided to stick...")
